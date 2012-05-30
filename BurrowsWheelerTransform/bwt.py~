@@ -1,0 +1,41 @@
+import sys, types, time, random, os, math
+import util, radix
+
+def bwt(S,s_array):
+    return [S[s_array[i]-1] for i in range(len(s_array))]
+
+def F(S,s_array):
+    return [S[s_array[i]] for i in range(len(s_array))]
+
+def ibwt(S):
+    L, dic = util.convertToNumAlphabet2(S)
+    F = radix.radixSort(L, max(L)+1)
+    L = [None] + L
+    F = [None] + F
+    V = [1]
+    map_M = {}
+    previousFChar = F[0]
+    map_M[F[0]] = 0
+    for i in range(len(F)):
+        if F[i] != previousFChar:
+            map_M[F[i]] = i
+            previousFChar = F[i]
+    counter_N = util.Counter()
+    counter_NHelper = util.Counter()
+    for i in range(len(L)):
+        counter_N[i] = counter_NHelper[L[i]]
+        counter_NHelper[L[i]] += 1
+    #for i in range(1, len(L)):
+    #    N_i = L[:i].count(L[i])
+    #    M_L_i = F.index(L[i])
+    #    V.append(M_L_i + N_i)
+    for i in range(1, len(L)):
+        V.append(map_M[L[i]] + counter_N[i])
+    prevV = V[0]
+    P = [1]
+    for i in range(1, len(V) - 1):
+        newV = V[prevV]
+        P.append(F[newV])
+        prevV = newV
+    P.reverse()
+    return util.convertToString(P, dic)

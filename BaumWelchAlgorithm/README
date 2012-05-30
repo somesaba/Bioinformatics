@@ -1,0 +1,200 @@
+###  README --- CS194 HMM PS 5
+Jae Ryoo
+Saba Khalilnaji
+
+In this project we were responsible for implementing a Hidden Markov Model (HMM) from scratch.
+Programming Language: Python
+
+
+INSTRUCTIONS on compiling and running our code:
+Get into the file HMM_Khalilnaji_Ryoo
+on the command line$python main.py sequences.fasta initial_parameters.txt
+
+you should get the following files:
+estimated_parameters.txt
+likelihoods.txt
+decodings_initial.txt
+decodings_estimated.txt
+
+TROUBLESHOOTING:
+NOTE: you will get print lines assuring you that our code is working but taking its 
+time :) Thanks!
+Please email: jay.ryoo@gmail.com if you are having trouble running our code. Thanks!
+_______________________________________________________________________________________________________________________
+Instructor: Yun S. Song
+Out: March 22, 2012
+Due: April 16, 2012
+Problem Set 5
+UC Berkeley, CS194-1: Algorithms for Computational Biology (Spring 2012)
+_________________________
+Instructions:
+HMM implementation
+The goal of this problem set is to implement the key algorithms for HMM discussed in class. Throughout, we will consider 
+the following interesting biological application:
+	Meiotic recombination is an important biological mechanism common to most forms of life. As a consequence of
+recombination, different positions on the same chromosome may have different genealogical histories. For example, given
+a pair of homologous sequences, different positions may have different times (denoted TMRCA) to the most recent common
+ancestor (MRCA), as illustrated in Figure 1. Recently, Li and Durbin (Nature, 475:493-496, 2011) used a hidden Markov
+model to estimate the position-specific T_MRCA for a pair of sequences. The transition and emission probabilities in
+their HMM arise from a stochastic genealogical process (called the coalescent), which you do not need to know to do the
+problems described below.
+
+              -----------------------------------------------------------------------------------------     
+              |                       ||                                                | |           |
+              |                       ||                                                | |           |
+	  4  -|     		      ||                                                | |           |
+              |                       ||                                                | |           |     
+              |                       ||                                                | |           |     
+              |                       ||                                                | |           |     
+          3  -|                       ||                                                | |           |     
+              |                       ||                                                | |           |     
+Time to       |                       ||                                                | |           |     
+MRCA          |                       ||                                                | |           |     
+          2  -|                       ||                                                | |           |     
+              |                     .-..------------.    .------------.                 | .           |     
+              |                     |               |    |            |                 |  |          |     
+              |                     |               |    |            |                 |  |          |     
+          1  -|                     |               |    |            |                 |  |          |     
+              |                     |               |    |            |                 |  |          |
+	      |                     |               |    |            |                 |  |          |
+              |  -------------------.               .----.            .-----------------.  .--------  |     
+              -----------------------------------------------------------------------------------------     
+                 |               |                |               |               |                |       
+                 0               20              40              60              80               100       
+                                                                                                            
+                                                     Position (kb)
+
+Figure 1: Time to the most recent common ancestor along a pair of homologous sequences, each of length 100 kb. Time is
+measured in units of 2N_e generations, where N_e is the so-called "effective" population size. For humans, an 
+approximate long-term effective population size is N_e = 10,000.
+
+Instruction:
+ - You may use any of the following programming languages: C, C++, Java, Python, Perl, Ruby. Use only the standard 
+   libraries for each language. Please provide a document detailing how one can compile and run your code. you should 
+   submit your source code and answers to the questions below, via e-mail to both the instructor and the GSI.
+ - You are strongly encouraged to pair up with a fellow student in class.
+ - Download ps5data.tgz from the course webpage. Included in the tar archive is a file called sequences.fasta, which 
+   contains a pair of DNA sequences of length L = 100,000 in FASTA format. Consider the following HMM:
+   - The observed symbol x_i in (SIGMA) = {I,D} at position 1 <= i <= L corresponds to whether the two sequences are 
+     identical (I) or different (D) at that position.
+   - The hidden state q_i in S = {t_1, t_2, t_3, t_4} at position 1 <= i <= L corresponds to the T_MRCA at that 
+     position.
+   - Assume that the hidden random variables {Q_i, 1 <= i <= L} form a homogeneous Markov chain, with transition 
+     probabilities a_kl, for k,l in S.
+   - As usual, the probability of emitting symbol (sigma) in (SIGMA) from state k in S is denoted by e_k((sigma)). The 
+     parameters of the model are (THETA) = {a_kl, e_k((sigma)), m_k}_{k,l in S; (sigma) in (SIGMA)}, where m_k denotes 
+     the marginal probability P(Q_1 = k), which can be regarded as the transition probability a_begin,k.
+
+Remark: We expect P(D|Q = t_j) > P(D|Q=t_i), for t_j > t_i. Why?
+
+Problems:
+	1. Implement the forward and backward algorithms.
+	2. Implement the Baum-Welch algorithm and use it to estimate the parameters of the model. For initialization, 
+           use the parameters (THETA)_initial  provided in initial_parameters.txt. Store your estimated parameters 
+           (THETA)_estimated  in a file called estimated_parameters.txt.
+	3. In a file called likelihoods.txt, store the log-likelihoods for the initial parameters (THETA)_initial and 
+           for your estimated parameters (THETA)_estimated.
+	4. Using the initial parameters (THETA)_initial, produce both Viterbi and posterior decodings, and compute the 
+           posterior mean E[T_MRCA | x, (THETA)_initial] for each position. Assume that S = {0.32, 1.75, 4.54, 9.40}. To          
+           identify which hidden state should correspond to which time, think about the remark mentioned above.
+		(a) Output your results to decodings_initial.txt in a 3-column format (Viterbi decoding, posterior 
+                    decoding, posterior mean).
+		(b) Plot your results, together with the true TMRCA in true_tmrca.txt. (In fact, Figure 1 shows the true 
+                    T_MRCA for the data you are analyzing.) Name your figure file plot_initial.pdf.
+	5. Using your estimated parameters estimated, produce both Viterbi and posterior decodings, and compute the 
+	   posterior mean E[T_MRCA | x, (THETA)_estimated] for each position.
+		(a) Output your results to decodings_estimated.txt in a 3-column format (Viterbi decoding, posterior       
+                    decoding, posterior mean).
+		(b) Plot your results, together with the true T_MRCA in true_tmrca.txt. Name your figure file 
+                    plot_estimated.pdf.
+
+Additional exercise (not to be turned in): Try starting the Baum-Welch algorithm with different initial parameter 
+settings. Do you obtain the same final estimates?
+
+Copyright 2012: Yun S. Song
+_______________________________________________________________________________________________________________________
+FILE OUTPUT INSTRUCTIONS:
+
+For ease of grading, please use the output format described below.
+
+Your program should take 2 input arguments:
+The input sequence file: sequence.fasta
+The initial parameters file: initial_parameters.txt
+
+Your program should output 4 files:
+estimated_parameters.txt
+likelihoods.txt
+decodings_initial.txt
+decodings_estimated.txt
+
+For any floating-point output, use the format "%.2e", which is scientific notation with 2 digits of precision after the 
+decimal. For example, 123.456 should be output as "1.23e+02". Note the lower case "e".
+In C/C++, this would be
+printf("%.4e", 123.45678);
+and in Python, this would be
+print "%.4e" % 123.45678
+
+Label the 4 states 1, 2, 3, and 4, where 1 corresponds to coalescent time 0.32, 2 corresponds to 1.75, etc.
+
+The format for the estimated_parameters.txt file is:
+The first 4 lines are the probabilities for the initial state. Each line should have the state label (an integer from 1 to 4)
+ followed by a single space followed by the probability in the proper floating-point format.
+The next 4 lines are the transition probabilities in matrix format. Each line should have 4 numbers, separated by _single_ 
+spaces, using the proper floating-point format. Do not label the states in the transition matrix. It should be 4 lines, with 
+4 numbers on each line.
+The next 4 lines are the emission probabilities. Each line should have the state label (an integer from 1 to 4) followed by 
+the emission probability for "I", in the proper floating-point format, followed by the emission probability for "D".
+
+As an example, the initial_parameters.txt file in this format would look as follows.
+1 6.03e-01
+2 3.57e-01
+3 3.89e-02
+4 5.39e-04
+1.00e+00 7.61e-05 8.28e-06 1.15e-07
+1.28e-04 1.00e+00 8.49e-05 1.18e-06
+1.28e-04 7.80e-04 9.99e-01 2.36e-05
+1.28e-04 7.80e-04 1.70e-03 9.97e-01
+1 9.96e-01 3.90e-03
+2 9.84e-01 1.64e-02
+3 9.60e-01 4.00e-02
+4 9.22e-01 7.83e-02
+As a quick check, your output file should be exactly 268 bytes.
+
+Please do not forget the new line character at the end of the last line. This does _not_ mean the last line should be an empty 
+line; it means that the last line should have a new line character at the end.
+
+The output file likelihoods.txt should have exactly 2 lines. The first line is the log likelihood for the initial parameters and
+ the second line is the log likelihood for the your estimated parameters. Again, use the proper floating-point format, and don't
+ forget the newline character at the end of the second line.
+For example:
+-100e+00
+-100e+00
+The output file decodings_initial.txt and decodings_estimated.txt have the same format.
+Each file should have 100,000 lines, one for each site in the data. Each line should have 3 numbers. The first number is the
+ state
+ (an integer) corresponding to the Viterbi decoding, the second number is the state (an integer) corresponding to the posterior
+ decoding, and the third number is the posterior mean (a floating-point number). Use the above format for the floating-point 
+number. These numbers should be separated by _single_ spaces.
+For example, the first 5 lines of decodings_initial.txt might look like this
+1 1 8.23e-01
+1 1 8.23e-01
+1 1 8.23e-01
+2 2 1.95e+00
+2 3 2.33e+00
+As a check, decodings_initial.txt and decodings_estimated.txt should each be exactly 1300000 bytes. (Each line is exactly 13 bytes,
+ including the newline character, and there are 100,000 lines.)
+
+The plots for 4(b) and 5(b) may be generated however you choose. Those should _not_ be automatically generated by your program.
+
+When writing to files, be sure that they are open for "write" and not for "append".
+
+Let me know if you have any questions on this specification.
+- Andrew Chan
+_______________________________________________________________________________________________________________________
+## Copyright 2012: Saba Khalilnaji, Jae Young Ryoo
+##
+## Keywords: CS194-1, CS194, HMM
+
+
+
+
